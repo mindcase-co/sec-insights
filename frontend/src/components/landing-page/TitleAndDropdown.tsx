@@ -19,6 +19,9 @@ import { customReactSelectStyles } from "~/styles/react-select";
 import { useIntercom } from "react-use-intercom";
 import { LoadingSpinner } from "~/components/basics/Loading";
 import useIsMobile from "~/hooks/utils/useIsMobile";
+import Image from "next/image";
+
+import RHALogo from "../../../public/RHA_logo.png";
 
 export const TitleAndDropdown = () => {
   const router = useRouter();
@@ -70,18 +73,27 @@ export const TitleAndDropdown = () => {
   }, []);
 
   return (
-    <div className="landing-page-gradient-1 relative flex h-max w-screen flex-col items-center font-lora ">
+    <div className="landing-page-gradient-1 flex h-screen w-screen flex-col items-center justify-center font-lora">
       {isMobile ? (
-        <div className="mt-12 flex h-1/5 w-11/12 rounded border p-4 text-center">
+        <div className="flex h-1/5 w-11/12 rounded border p-4 text-center">
           <div className="text-xl font-bold">
             To start analyzing documents, please switch to a larger screen!
           </div>
         </div>
       ) : (
-        <div className="mt-5 flex h-min w-11/12 max-w-[1200px] flex-col items-center justify-center rounded-lg border-2 bg-white sm:h-[400px] md:w-9/12 ">
-          <div className="p-4 text-center text-xl font-bold">
-            Start your conversation by selecting the documents you want to
-            explore
+        <div className="flex h-[90%] w-11/12 max-w-[1200px] flex-col items-center justify-center rounded-lg border-2 bg-white pt-4 md:w-9/12">
+          <div className="flex items-center justify-between p-4 w-full mb-2">
+            <Image
+              src="/RHA_logo.png"
+              alt=""
+              width={74}
+              height={16}
+              className="flex-shrink-0 self-start translate-x-14"
+            />
+            <h1 className="mx-4 flex-grow text-center text-xl font-bold">
+              Start your conversation by selecting the documents you want to
+              explore
+            </h1>
           </div>
           <div className="h-1/8 flex w-full flex-wrap items-center justify-center font-nunito">
             <div className="m-1 flex w-96 items-center">
