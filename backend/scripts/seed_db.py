@@ -9,6 +9,9 @@ import upsert_db_sec_documents
 import download_sec_pdf
 from download_sec_pdf import DEFAULT_CIKS, DEFAULT_FILING_TYPES
 import seed_storage_context
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def copy_to_s3(dir_path: str, s3_bucket: str = settings.S3_ASSET_BUCKET_NAME):
@@ -18,13 +21,17 @@ def copy_to_s3(dir_path: str, s3_bucket: str = settings.S3_ASSET_BUCKET_NAME):
     s3 = s3fs.S3FileSystem(
         key=settings.AWS_KEY,
         secret=settings.AWS_SECRET,
-        endpoint_url=settings.S3_ENDPOINT_URL,
+        endpoint_url="https://s3.ap-south-1.amazonaws.com",
+        client_kwargs={'region_name': 'ap-south-1'}
     )
 
-    if not (settings.RENDER or s3.exists(s3_bucket)):
-        s3.mkdir(s3_bucket)
-
-    s3.put(dir_path, s3_bucket, recursive=True)
+    try:
+        if not (settings.RENDER or s3.exists(s3_bucket)):
+            s3.mkdir(s3_bucket)
+        s3.put(dir_path, s3_bucket, recursive=True)
+    except Exception as e:
+        logger.error(f"Failed to copy files to S3: {e}")
+        raise
 
 
 async def async_seed_db(

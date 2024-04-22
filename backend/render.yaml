@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: sec-insights-backend
+    env: docker
+    dockerfilePath: './Dockerfile'
+    envVars:
+      - key: OPENAI_API_KEY
+        fromDatabase:
+          name: sec-insights-db
+          property: openaiApiKey
+      - key: AWS_KEY
+        sync: false
+      - key: AWS_SECRET
+        sync: false
+    healthCheckPath: '/api/health'
+
+  - type: pserv
+    name: sec-insights-db
+    env: postgres
+    database:
+      name: sec-insights-db
+      plan: starter
+
+databases:
+  - name: sec-insights-db
+    plan: starter
+
+# Optionally, define your Localstack service for S3 emulation

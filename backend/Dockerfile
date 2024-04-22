@@ -1,13 +1,14 @@
-# https://hub.docker.com/_/python
 FROM python:3.11.3-slim-bullseye
 
 ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
 WORKDIR $APP_HOME
+
 RUN pip install poetry
+RUN apt-get update && apt-get install libpq-dev gcc build-essential wkhtmltopdf -y
+
 COPY . ./
-RUN apt-get update
-RUN apt-get install libpq-dev gcc build-essential wkhtmltopdf  -y
+
 RUN poetry install
 
 ARG DATABASE_URL
@@ -16,4 +17,5 @@ ENV DATABASE_URL=$DATABASE_URL
 ARG OPENAI_API_KEY
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
-CMD ["poetry", "run", "start"]
+# Start the application with SSL enabled
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ssl-keyfile", "localhostmkcert+1-key.pem", "--ssl-certfile", "localhostmkcert+1.pem"]

@@ -1,23 +1,24 @@
-from typing import cast
-import uvicorn
 import logging
 import sys
+from contextlib import asynccontextmanager
+from typing import cast
+
 import sentry_sdk
+import uvicorn
 from fastapi import FastAPI
+from llama_index.node_parser.text.utils import split_by_sentence_tokenizer
+from sqlalchemy.engine import Engine, create_engine
 from starlette.middleware.cors import CORSMiddleware
-from alembic.config import Config
+
 import alembic.config
 from alembic import script
+from alembic.config import Config
 from alembic.runtime import migration
-from sqlalchemy.engine import create_engine, Engine
-from llama_index.node_parser.text.utils import split_by_sentence_tokenizer
-
 from app.api.api import api_router
+from app.chat.pg_vector import CustomPGVectorStore, get_vector_store_singleton
+from app.core.config import AppEnvironment, settings
 from app.db.wait_for_db import check_database_connection
-from app.core.config import settings, AppEnvironment
 from app.loader_io import loader_io_router
-from contextlib import asynccontextmanager
-from app.chat.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 
 logger = logging.getLogger(__name__)
 
@@ -103,14 +104,14 @@ app = FastAPI(
 if settings.BACKEND_CORS_ORIGINS:
     origins = settings.BACKEND_CORS_ORIGINS.copy()
     if settings.CODESPACES and settings.CODESPACE_NAME and \
-        settings.ENVIRONMENT == AppEnvironment.LOCAL:
+            settings.ENVIRONMENT == AppEnvironment.LOCAL:
         # add codespace origin if running in Github codespace
         origins.append(f"https://{settings.CODESPACE_NAME}-3000.app.github.dev")
     # allow all origins
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=origins,
-        allow_origin_regex="https://llama-app-frontend.*\.vercel\.app",
+        allow_origins=["http://localhost:3000", "http://0.0.0.0:3000", "*"],
+        allow_origin_regex=r"^http?://.*$",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
