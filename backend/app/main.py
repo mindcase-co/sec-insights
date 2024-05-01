@@ -110,8 +110,8 @@ if settings.BACKEND_CORS_ORIGINS:
     # allow all origins
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["https://sec-insights-1.onrender.com",
-                       "https://sec-insights-1.onrender.com/"],
+        allow_origins=["http://localhost", "http://localhost:8000",
+                       "http://localhost:3000", "http://127.0.0.1:3000", "http://0.0.0.0:3000", "http://ec2-3-109-158-62.ap-south-1.compute.amazonaws.com"],
         allow_origin_regex=r"^https?://.*$",
         allow_credentials=True,
         allow_methods=["*"],
